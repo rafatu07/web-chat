@@ -8,6 +8,7 @@ const chat = document.querySelector(".chat")
 const chatForm = chat.querySelector(".chat__form")
 const chatInput = chat.querySelector(".chat__input")
 const chatMessages = chat.querySelector(".chat__messages")
+const clearMessagesButton = document.getElementById("clearMessagesButton"); // Adicione o elemento do botão de limpar mensagens
 
 const colors = [
     "cadetblue",
@@ -71,6 +72,18 @@ const processMessage = ({ data }) => {
     chatMessages.appendChild(message)
 
     scrollScreen()
+
+    // Adicione o armazenamento local das mensagens recebidas
+    const oldMessages = JSON.parse(localStorage.getItem("chatMessages") || "[]");
+    oldMessages.push({ userId, userName, userColor, content });
+    localStorage.setItem("chatMessages", JSON.stringify(oldMessages));
+
+    // Exiba o botão de limpar mensagens se o usuário for o administrador
+    if (user.name === "admin") {
+        clearMessagesButton.style.display = "block";
+    } else {
+        clearMessagesButton.style.display = "none";
+    }
 }
 
 const handleLogin = (event) => {
@@ -82,6 +95,23 @@ const handleLogin = (event) => {
 
     login.style.display = "none"
     chat.style.display = "flex"
+
+    // Verifique se o usuário é admin e mostre o botão de limpar mensagens se for o caso
+    if (user.name === "admin") {
+        clearMessagesButton.style.display = "block";
+    } else {
+        clearMessagesButton.style.display = "none";
+    }
+
+    // Recupere e exiba as mensagens antigas ao fazer login
+    const oldMessages = JSON.parse(localStorage.getItem("chatMessages") || "[]");
+    oldMessages.forEach(({ userId, userName, userColor, content }) => {
+        const message =
+            userId == user.id
+                ? createMessageSelfElement(content)
+                : createMessageOtherElement(content, userName, userColor)
+        chatMessages.appendChild(message);
+    });
 
     websocket = new WebSocket("wss://web-chat-back-ende.onrender.com")
     websocket.onmessage = processMessage
@@ -101,6 +131,18 @@ const sendMessage = (event) => {
 
     chatInput.value = ""
 }
+
+// Adicione um evento de clique para o botão de limpar mensagens
+clearMessagesButton.addEventListener("click", () => {
+    // Limpe as mensagens da interface do usuário
+    chatMessages.innerHTML = "";
+
+    // Limpe as mensagens armazenadas no localStorage
+    localStorage.removeItem("chatMessages");
+
+    // Oculte o botão de limpar mensagens
+    clearMessagesButton.style.display = "none";
+});
 
 loginForm.addEventListener("submit", handleLogin)
 chatForm.addEventListener("submit", sendMessage)

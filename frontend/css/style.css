@@ -207,3 +207,22 @@ h1 {
     color: cadetblue;
 }
 
+/* Adicione essas regras CSS para o botão de limpar mensagens */
+#clearMessagesButton {
+    display: none;
+    background-color: #212121;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    position: absolute; /* Altera para posição absoluta */
+    bottom: -50px; /* Define a distância do fundo da tela */
+    left: 50%; /* Define a posição horizontal como metade da largura da tela */
+    transform: translateX(-50%); /* Centraliza o botão horizontalmente */
+}
+
+#clearMessagesButton:hover {
+    background-color: #333;
+}
