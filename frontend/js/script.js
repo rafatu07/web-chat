@@ -102,5 +102,28 @@ const sendMessage = (event) => {
     chatInput.value = ""
 }
 
+function updateActiveUsers(users) {
+    const activeUsersList = document.querySelector(".active-users");
+
+    // Iterar sobre os usuários atuais na lista
+    const existingUsers = Array.from(activeUsersList.children).map(userElement => userElement.textContent);
+
+    // Adicionar novos usuários à lista
+    users.forEach(user => {
+        if (!existingUsers.includes(user)) { // Verifica se o usuário já está na lista
+            const userElement = document.createElement("li");
+            userElement.textContent = user;
+            activeUsersList.appendChild(userElement);
+        }
+    });
+
+    // Remover usuários que saíram
+    existingUsers.forEach(existingUser => {
+        if (!users.includes(existingUser)) { // Verifica se o usuário atual não está mais na lista atualizada
+            activeUsersList.querySelector(`li:contains('${existingUser}')`).remove(); // Remove o elemento da lista
+        }
+    });
+}
+
 loginForm.addEventListener("submit", handleLogin)
 chatForm.addEventListener("submit", sendMessage)
