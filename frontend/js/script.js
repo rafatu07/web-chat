@@ -60,47 +60,68 @@ const scrollScreen = () => {
     })
 }
 
+const updateUserList = (users) => {
+    const activeUsersList = document.querySelector(".active-users");
+    activeUsersList.innerHTML = ""; // Limpa a lista antes de adicionar os novos usuários
+    users.forEach(user => {
+        const userElement = document.createElement("li");
+        userElement.textContent = user;
+        activeUsersList.appendChild(userElement);
+    });
+};
+
 const processMessage = ({ data }) => {
-    const { userId, userName, userColor, content } = JSON.parse(data)
+    const { type, userId, userName, userColor, content } = JSON.parse(data);
 
-    const message =
-        userId == user.id
-            ? createMessageSelfElement(content)
-            : createMessageOtherElement(content, userName, userColor)
+    if (type === "chatMessage") {
+        const message =
+            userId == user.id
+                ? createMessageSelfElement(content)
+                : createMessageOtherElement(content, userName, userColor);
 
-    chatMessages.appendChild(message)
+        chatMessages.appendChild(message);
 
-    scrollScreen()
-}
-
+        scrollScreen();
+    }
+};
 const handleLogin = (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    user.id = crypto.randomUUID()
-    user.name = loginInput.value
-    user.color = getRandomColor()
+    user.id = crypto.randomUUID();
+    user.name = loginInput.value;
+    user.color = getRandomColor();
 
-    login.style.display = "none"
-    chat.style.display = "flex"
+    login.style.display = "none";
+    chat.style.display = "flex";
 
-    websocket = new WebSocket("wss://web-chat-back-ende.onrender.com")
-    websocket.onmessage = processMessage
-}
+    websocket = new WebSocket("wss://web-chat-back-ende.onrender.com");
+    websocket.onmessage = (event) => {
+        const { type, users } = JSON.parse(event.data);
+        
+        if (type === "activeUsersUpdate") {
+            updateUserList(users);
+        } else {
+            processMessage(event);
+        }
+    };
+    websocket.send(JSON.stringify({ type: "join", userName: user.name }));
+};
 
 const sendMessage = (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     const message = {
+        type: "chatMessage",
         userId: user.id,
         userName: user.name,
         userColor: user.color,
         content: chatInput.value
-    }
+    };
 
-    websocket.send(JSON.stringify(message))
+    websocket.send(JSON.stringify(message));
 
-    chatInput.value = ""
-}
+    chatInput.value = "";
+};
 
 loginForm.addEventListener("submit", handleLogin)
 chatForm.addEventListener("submit", sendMessage)

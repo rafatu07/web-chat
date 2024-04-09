@@ -242,8 +242,8 @@ h1 {
 }
 .active-users {
     position: fixed; /* Fixa o elemento na tela */
-    top: 47px; /* Distância do topo da tela (considerando o espaço do cabeçalho) */
-    left: 150px; /* Distância da esquerda da tela */
+    top: 37px; /* Distância do topo da tela (considerando o espaço do cabeçalho) */
+    left: 137px; /* Distância da esquerda da tela */
     width: 100%; /* Define a largura para ocupar toda a largura da tela */
     padding: 10px; /* Espaçamento interno */
     background-color: #212121; /* Cor de fundo */
