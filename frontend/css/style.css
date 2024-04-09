@@ -226,3 +226,17 @@ h1 {
 #clearMessagesButton:hover {
     background-color: #333;
 }
+
+
+.online-users-header{
+    position: fixed; /* Fixa o elemento na tela */
+    top: 37px; /* Distância do topo da tela */
+    left: 0; /* Distância da esquerda da tela */
+    width: 100%; /* Define a largura para ocupar toda a largura da tela */
+    padding: 10px; /* Espaçamento interno */
+    background-color: #212121; /* Cor de fundo */
+    color: #ffffff; /* Cor do texto */
+    border-radius: 0 0 5px 5px; /* Borda arredondada somente no canto inferior */
+    font-size: 14px; /* Tamanho da fonte */
+    text-align: left; /* Centraliza o texto horizontalmente */
+}
