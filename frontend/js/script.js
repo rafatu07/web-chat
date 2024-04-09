@@ -104,3 +104,24 @@ const sendMessage = (event) => {
 
 loginForm.addEventListener("submit", handleLogin)
 chatForm.addEventListener("submit", sendMessage)
+
+// Adicione esta função para atualizar a lista de usuários ativos no HTML
+function updateActiveUsersList(users) {
+    const activeUsersList = document.querySelector(".active-users");
+    activeUsersList.innerHTML = ""; // Limpa a lista antes de adicionar os novos usuários
+    users.forEach(user => {
+        const userElement = document.createElement("li");
+        userElement.textContent = user;
+        activeUsersList.appendChild(userElement);
+    });
+}
+
+// Adicione este manipulador de mensagens WebSocket para processar as atualizações da lista de usuários ativos
+websocket.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    if (message.type === "activeUsersUpdate") {
+        updateActiveUsersList(message.users);
+    } else {
+        processMessage(event); // Chame a função existente para processar outras mensagens
+    }
+};
