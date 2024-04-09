@@ -57,12 +57,13 @@ const scrollScreen = () => {
 };
 
 const processMessage = ({ data }) => {
-    const { type, userName } = JSON.parse(data);
+    const { type, userName, users } = JSON.parse(data); // Adicionado 'users' para receber a lista de usuários ativos
 
     if (type === "userJoined") {
         const userElement = document.createElement("li");
         userElement.textContent = userName;
         activeUsersList.appendChild(userElement);
+        updateActiveUsers(users); // Chama a função para atualizar a lista de usuários ativos
     } else if (type === "userLeft") {
         const userList = activeUsersList.querySelectorAll("li");
         userList.forEach(user => {
@@ -114,6 +115,16 @@ const sendMessage = (event) => {
     websocket.send(JSON.stringify(message));
     chatInput.value = "";
 };
+
+function updateActiveUsers(users) {
+    const activeUsersList = document.querySelector(".active-users");
+    activeUsersList.innerHTML = ""; // Limpa a lista antes de adicionar os novos usuários
+    users.forEach(user => {
+        const userElement = document.createElement("li");
+        userElement.textContent = user;
+        activeUsersList.appendChild(userElement);
+    });
+}
 
 loginForm.addEventListener("submit", handleLogin);
 chatForm.addEventListener("submit", sendMessage);

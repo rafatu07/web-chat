@@ -240,3 +240,18 @@ h1 {
     font-size: 14px; /* Tamanho da fonte */
     text-align: left; /* Centraliza o texto horizontalmente */
 }
+.active-users {
+    position: fixed; /* Fixa o elemento na tela */
+    top: 47px; /* Distância do topo da tela (considerando o espaço do cabeçalho) */
+    left: 150px; /* Distância da esquerda da tela */
+    width: 100%; /* Define a largura para ocupar toda a largura da tela */
+    padding: 10px; /* Espaçamento interno */
+    background-color: #212121; /* Cor de fundo */
+    color: #ffffff; /* Cor do texto */
+    border-radius: 0 0 5px 5px; /* Borda arredondada somente no canto inferior */
+    font-size: 14px; /* Tamanho da fonte */
+    text-align: left; /* Alinhamento do texto */
+    list-style: none; /* Remove os marcadores de lista */
+    margin: 0; /* Remove as margens padrão */
+    padding-inline-start: 0; /* Remove o recuo da lista */
+}
