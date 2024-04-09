@@ -62,12 +62,12 @@ const processMessage = ({ data }) => {
     if (type === "userJoined") {
         const userElement = document.createElement("li");
         userElement.textContent = userName;
-        activeUsersList.appendChild(userElement); // Adiciona o usuário à lista de usuários online
+        activeUsersList.appendChild(userElement);
     } else if (type === "userLeft") {
         const userList = activeUsersList.querySelectorAll("li");
         userList.forEach(user => {
             if (user.textContent === userName) {
-                user.remove(); // Remove o usuário da lista de usuários online
+                user.remove();
             }
         });
     } else {
@@ -94,7 +94,6 @@ const handleLogin = (event) => {
     websocket = new WebSocket("wss://web-chat-back-ende.onrender.com");
     websocket.onmessage = processMessage;
 
-    // Envie uma mensagem ao servidor informando que o usuário entrou no chat
     const joinMessage = {
         type: "join",
         userName: user.name
