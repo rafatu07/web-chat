@@ -14,18 +14,3 @@ wss.on("connection", (ws) => {
 
     console.log("client connected")
 })
-
-ws.on("join", (userName) => {
-    activeUsers.push(userName);
-    sendActiveUsers(); // Envia uma mensagem de atualização de usuários
-});
-
-ws.on("leave", (userName) => {
-    activeUsers = activeUsers.filter(user => user !== userName);
-    sendActiveUsers(); // Envia uma mensagem de atualização de usuários
-});
-
-function sendActiveUsers() {
-    const message = JSON.stringify({ type: "activeUsersUpdate", users: activeUsers });
-    wss.clients.forEach(client => client.send(message));
-}
