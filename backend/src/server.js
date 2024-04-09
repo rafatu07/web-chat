@@ -4,26 +4,25 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const wss = new WebSocketServer({ port: process.env.PORT || 8080 });
-let activeUsers = []; // Lista de usuários ativos
+
+// Array para armazenar os usuários ativos
+let activeUsers = [];
 
 wss.on("connection", (ws) => {
     ws.on("error", console.error);
 
+    // Envia a lista de usuários ativos para o novo cliente conectado
+    ws.send(JSON.stringify({ type: "activeUsersUpdate", users: activeUsers }));
+
     ws.on("message", (data) => {
         const message = JSON.parse(data);
-        
+
         if (message.type === "join") {
-            // Adiciona o novo usuário à lista de usuários ativos
-            activeUsers.push(message.userName);
-            // Envia uma mensagem para todos os clientes contendo a lista atualizada de usuários ativos
-            updateActiveUsers();
+            handleUserJoin(message.userName);
         } else if (message.type === "leave") {
-            // Remove o usuário que saiu da lista de usuários ativos
-            activeUsers = activeUsers.filter(user => user !== message.userName);
-            // Envia uma mensagem para todos os clientes contendo a lista atualizada de usuários ativos
-            updateActiveUsers();
+            handleUserLeave(message.userName);
         } else {
-            // Se não for uma mensagem de entrada ou saída de usuário, apenas retransmita a mensagem para todos os clientes
+            // Reenvia a mensagem para todos os clientes
             wss.clients.forEach((client) => client.send(data));
         }
     });
@@ -31,11 +30,22 @@ wss.on("connection", (ws) => {
     console.log("client connected");
 });
 
-// Função para enviar uma mensagem para todos os clientes conectados contendo a lista de usuários ativos
-function updateActiveUsers() {
-    const message = {
-        type: "activeUsersUpdate",
-        users: activeUsers
-    };
-    wss.clients.forEach((client) => client.send(JSON.stringify(message)));
+// Função para lidar com a entrada de um novo usuário
+function handleUserJoin(userName) {
+    if (!activeUsers.includes(userName)) {
+        activeUsers.push(userName);
+        broadcastActiveUsersUpdate();
+    }
+}
+
+// Função para lidar com a saída de um usuário
+function handleUserLeave(userName) {
+    activeUsers = activeUsers.filter(user => user !== userName);
+    broadcastActiveUsersUpdate();
+}
+
+// Função para enviar uma mensagem de atualização da lista de usuários ativos para todos os clientes
+function broadcastActiveUsersUpdate() {
+    const message = JSON.stringify({ type: "activeUsersUpdate", users: activeUsers });
+    wss.clients.forEach((client) => client.send(message));
 }
