@@ -73,6 +73,27 @@ const processMessage = ({ data }) => {
     scrollScreen()
 }
 
+const checkConnection = () => {
+    if (websocket.readyState === WebSocket.CLOSED) {
+        // Reconnect if the connection is closed
+        websocket = new WebSocket("wss://web-chat-back-ende.onrender.com")
+        websocket.onmessage = processMessage
+        websocket.onopen = () => {
+            // After reconnecting, send login information again
+            const message = {
+                type: "login",
+                userId: user.id,
+                userName: user.name,
+                userColor: user.color
+            }
+            websocket.send(JSON.stringify(message))
+        }
+    }
+};
+
+// Set interval to check connection every 30 seconds
+setInterval(checkConnection, 30000);
+
 const handleLogin = (event) => {
     event.preventDefault()
 
